@@ -260,6 +260,7 @@
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Window\WindowBase.hpp" />
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Window\WindowEnums.hpp" />
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Window\WindowHandle.hpp" />
+    <ClInclude Include="src\render\console\Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ext\SFML-3.0.0\include\SFML\Audio\SoundFileFactory.inl" />
