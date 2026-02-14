@@ -1,0 +1,3 @@
+[submodule "src/console"]
+	path = src/console
+	url = https://github.com/verleihernix/console.git
