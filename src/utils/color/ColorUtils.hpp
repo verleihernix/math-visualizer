@@ -4,5 +4,5 @@
 
 namespace colors
 {
-	sf::Color colorFromString(const std::string& str);
+	sf::Color colorFromString(const std::string& name);
 }
