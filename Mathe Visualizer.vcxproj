@@ -159,9 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Audio.hpp" />
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Audio\AudioResource.hpp" />
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Audio\Export.hpp" />
