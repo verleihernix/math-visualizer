@@ -281,6 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\parser\ExpressionParser.cpp" />
     <ClCompile Include="src\utils\color\ColorUtils.cpp" />
     <ClCompile Include="src\utils\math\MathUtil.cpp" />
     <ClCompile Include="src\utils\math\MathUtil.hpp" />

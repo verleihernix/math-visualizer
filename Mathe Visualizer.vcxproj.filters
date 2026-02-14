@@ -382,5 +382,8 @@
     <ClCompile Include="src\utils\color\ColorUtils.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="src\parser\ExpressionParser.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
