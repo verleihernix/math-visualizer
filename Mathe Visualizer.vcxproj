@@ -279,6 +279,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\utils\math\MathUtil.cpp" />
     <ClCompile Include="src\utils\math\MathUtil.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

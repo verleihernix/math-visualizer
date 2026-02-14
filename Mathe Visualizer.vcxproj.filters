@@ -370,5 +370,8 @@
     <ClCompile Include="src\utils\math\MathUtil.hpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\math\MathUtil.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
