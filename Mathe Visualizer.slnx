@@ -2,5 +2,5 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="Mathe Visualizer.vcxproj" />
+  <Project Path="Mathe Visualizer.vcxproj" Id="df9bd739-c995-444f-922b-80833bc1a90f" />
 </Solution>
