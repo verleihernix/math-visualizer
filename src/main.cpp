@@ -1,4 +1,4 @@
-#include "render/console/Console.hpp"
+#include "console/Console.hpp"
 
 int main()
 {
