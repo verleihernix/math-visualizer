@@ -38,6 +38,15 @@ void renderLoop()
 				running = false;
 				window.close();
 			}
+
+			// zoom
+			if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>())
+			{
+				if (scroll->delta > 0)
+					viewport.scale *= 1.1f;
+				else
+					viewport.scale /= 1.1f;
+			}
 		}
 
 		window.clear(sf::Color::Black);
