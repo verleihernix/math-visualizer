@@ -367,4 +367,9 @@
   <ItemGroup>
     <Text Include="src\render\console\LICENSE.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
