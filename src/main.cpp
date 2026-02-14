@@ -29,6 +29,9 @@ void renderLoop()
 
 	window.setFramerateLimit(60);
 
+	sf::Vector2i last_mouse_pos;
+	bool dragging = false;
+
 	while (window.isOpen() && running)
 	{
 		while (auto event = window.pollEvent())
@@ -46,6 +49,35 @@ void renderLoop()
 					viewport.scale *= 1.1f;
 				else
 					viewport.scale /= 1.1f;
+			}
+
+			// start dragging
+			if (const auto* mouse_pressed = event->getIf<sf::Event::MouseButtonPressed>())
+			{
+				if (mouse_pressed->button == sf::Mouse::Button::Left)
+				{
+					dragging = true;
+					last_mouse_pos = sf::Mouse::getPosition(window);
+				}
+			}
+
+			// stop dragging
+			if (const auto* mouse_released = event->getIf<sf::Event::MouseButtonReleased>())
+			{
+				if (mouse_released->button == sf::Mouse::Button::Left)
+					dragging = false;
+			}
+
+			// move viewport while dragging
+			if (dragging)
+			{
+				sf::Vector2i current_pos = sf::Mouse::getPosition(window);
+				sf::Vector2i delta = current_pos - last_mouse_pos;
+
+				viewport.offsetX += -delta.x / viewport.scale;
+				viewport.offsetY += delta.y / viewport.scale; 
+
+				last_mouse_pos = current_pos;
 			}
 		}
 
