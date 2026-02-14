@@ -376,5 +376,8 @@
     <ClCompile Include="src\utils\math\MathUtil.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\color\ColorUtils.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
