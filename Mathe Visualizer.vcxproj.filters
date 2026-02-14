@@ -318,6 +318,9 @@
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Window.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="src\console\Console.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ext\SFML-3.0.0\include\SFML\Audio\SoundFileFactory.inl">
