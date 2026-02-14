@@ -16,7 +16,7 @@ namespace math
 
 	sf::Vector2f worldToScreen(const sf::Vector2f& world, const Viewport& view);
 
-	sf::Vector2f screenToWorld(const sf::Vector2f& world, const Viewport& view);
+	sf::Vector2f screenToWorld(const sf::Vector2f& screen, const Viewport& view);
 
 	sf::VertexArray sampleFunction(
 		const std::function<float(float)>& func,
