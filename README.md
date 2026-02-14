@@ -1,4 +1,4 @@
 Simple and lightweight visualizer for mathematical functions.
 
-**Usage:**
-Open the application and type 'help' to see all commands
+Download it from the *Releases* tab.
+Type 'help' in the console to see all commands
