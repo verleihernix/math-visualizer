@@ -324,6 +324,9 @@
     <ClInclude Include="src\utils\color\ColorUtils.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="src\parser\ExpressionParser.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ext\SFML-3.0.0\include\SFML\Audio\SoundFileFactory.inl">

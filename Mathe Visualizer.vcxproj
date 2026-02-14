@@ -261,6 +261,7 @@
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Window\WindowEnums.hpp" />
     <ClInclude Include="ext\SFML-3.0.0\include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="src\console\Console.hpp" />
+    <ClInclude Include="src\parser\ExpressionParser.hpp" />
     <ClInclude Include="src\utils\color\ColorUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
