@@ -94,6 +94,7 @@ void renderLoop()
 
 int main()
 {
+	SetConsoleTitle("Math Visualizer");
 	console::open("Math Visualizer v1");
 
 	std::thread renderThread(renderLoop);
