@@ -362,5 +362,9 @@
     <None Include="ext\SFML-3.0.0\include\SFML\Window\WindowBase.inl">
       <Filter>Headerdateien</Filter>
     </None>
+    <None Include="src\render\console\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\render\console\LICENSE.txt" />
   </ItemGroup>
 </Project>
