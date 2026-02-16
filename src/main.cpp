@@ -7,18 +7,21 @@
 #include <mutex>
 #include <vector>
 #include <atomic>
+#include <cstdlib>
 
 struct FunctionEntry
 {
 	std::function<float(float)> func;
 	sf::Color color;
+	sf::VertexArray cached_graph{ sf::PrimitiveType::LineStrip };
 };
 
 std::vector<FunctionEntry> functions;
 std::mutex functions_mutex;
 
-math::Viewport viewport{ 1200.f, 800.f, 50.f, 0.f, 0.f };
+math::Viewport viewport{ 1200.f,800.f,50.f,0.f,0.f };
 std::atomic<bool> running = true;
+std::atomic<bool> viewport_dirty = true;
 
 void renderLoop()
 {
@@ -27,7 +30,7 @@ void renderLoop()
 		"Visualizer"
 	);
 
-	window.setFramerateLimit(60);
+	window.setVerticalSyncEnabled(true);
 
 	sf::Vector2i last_mouse_pos;
 	bool dragging = false;
@@ -42,82 +45,92 @@ void renderLoop()
 				window.close();
 			}
 
-			// zoom
+			// zoom via scroll
 			if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>())
 			{
 				if (scroll->delta > 0)
 					viewport.scale *= 1.1f;
 				else
 					viewport.scale /= 1.1f;
+
+				viewport_dirty = true;
 			}
 
-			// start dragging
-			if (const auto* mouse_pressed = event->getIf<sf::Event::MouseButtonPressed>())
+			// Start Drag
+			if (const auto* pressed = event->getIf<sf::Event::MouseButtonPressed>())
 			{
-				if (mouse_pressed->button == sf::Mouse::Button::Left)
+				if (pressed->button == sf::Mouse::Button::Left)
 				{
 					dragging = true;
 					last_mouse_pos = sf::Mouse::getPosition(window);
 				}
 			}
 
-			// stop dragging
-			if (const auto* mouse_released = event->getIf<sf::Event::MouseButtonReleased>())
+			// stop Drag
+			if (const auto* released = event->getIf<sf::Event::MouseButtonReleased>())
 			{
-				if (mouse_released->button == sf::Mouse::Button::Left)
+				if (released->button == sf::Mouse::Button::Left)
 					dragging = false;
 			}
 
-			// move viewport while dragging
+			// drag viewport with mouse
 			if (dragging)
 			{
 				sf::Vector2i current_pos = sf::Mouse::getPosition(window);
 				sf::Vector2i delta = current_pos - last_mouse_pos;
 
 				viewport.offsetX += -delta.x / viewport.scale;
-				viewport.offsetY += delta.y / viewport.scale; 
+				viewport.offsetY += delta.y / viewport.scale;
 
 				last_mouse_pos = current_pos;
+
+				viewport_dirty = true;
 			}
 		}
 
 		window.clear(sf::Color::Black);
 
+		// draw axis
 		{
-			sf::Vertex x_vertex_1;
-			x_vertex_1.position = math::worldToScreen({ -1000.f, 0.f }, viewport);
-			x_vertex_1.color = sf::Color::White;
-			sf::Vertex x_vertex_2;
-			x_vertex_2.position = math::worldToScreen({ 1000.f, 0.f }, viewport);
-			x_vertex_2.color = sf::Color::White;
+			sf::Vertex x_axis[] =
+			{
+				{ math::worldToScreen({ -1000.f, 0.f }, viewport), sf::Color::White },
+				{ math::worldToScreen({  1000.f, 0.f }, viewport), sf::Color::White }
+			};
 
-			sf::Vertex x_axis[] = { x_vertex_1, x_vertex_2 };
-
-			sf::Vertex y_vertex_1;
-			y_vertex_1.position = math::worldToScreen({ 0.f, -1000.f }, viewport);
-			y_vertex_1.color = sf::Color::White;
-			sf::Vertex y_vertex_2;
-			y_vertex_2.position = math::worldToScreen({ 0.f, 1000.f }, viewport);
-			y_vertex_2.color = sf::Color::White;
-
-			sf::Vertex y_axis[] = { y_vertex_1, y_vertex_2 };
+			sf::Vertex y_axis[] =
+			{
+				{ math::worldToScreen({ 0.f, -1000.f }, viewport), sf::Color::White },
+				{ math::worldToScreen({ 0.f,  1000.f }, viewport), sf::Color::White }
+			};
 
 			window.draw(x_axis, 2, sf::PrimitiveType::Lines);
 			window.draw(y_axis, 2, sf::PrimitiveType::Lines);
 		}
 
+		// graphs
 		{
 			std::lock_guard<std::mutex> lock(functions_mutex);
 
-			for (auto& f : functions)
+			if (viewport_dirty)
 			{
-				auto graph = math::sampleFunction(f.func, viewport, 0.01f);
+				float step = 1.f / viewport.scale; // zoom based sampling
+				if (step > 0.5f) step = 0.5f;
+				if (step < 0.0005f) step = 0.0005f;
 
-				for (std::size_t itr = 0; itr < graph.getVertexCount(); ++itr)
-					graph[itr].color = f.color;
+				for (auto& func : functions)
+				{
+					func.cached_graph = math::sampleFunction(func.func, viewport, step);
 
-				window.draw(graph);
+					for (std::size_t itr = 0; itr < func.cached_graph.getVertexCount(); ++itr)
+						func.cached_graph[itr].color = func.color;
+				}
+
+				viewport_dirty = false;
 			}
+
+			for (auto& func : functions)
+				window.draw(func.cached_graph);
 		}
 
 		window.display();
@@ -127,7 +140,7 @@ void renderLoop()
 int main()
 {
 	SetConsoleTitle("Math Visualizer");
-	console::open("Math Visualizer v1");
+	console::open("Math Visualizer v1.1");
 
 	std::thread renderThread(renderLoop);
 
@@ -143,44 +156,23 @@ int main()
 
 		if (cmd == "help")
 		{
-			if (cmd == "help")
-			{
-				console::print(console::Color::Cyan, true, "\nAvailable Commands:");
-				console::print(console::Color::White, true, "  plot <expression>  - Plot a mathematical function (e.g., plot sin(x))");
-				console::print(console::Color::White, true, "  clear              - Remove all plotted functions");
-				console::print(console::Color::White, true, "  zoom <factor>      - Zoom in/out (e.g., zoom 1.5 or zoom 0.5)");
-				console::print(console::Color::White, true, "  pan <dx> <dy>      - Move viewport (e.g., pan 10 5)");
-				console::print(console::Color::White, true, "  help               - Show this help message");
-				console::print(console::Color::White, true, "  exit               - Close the application\n");
-				continue;
-			}
+			console::print(console::Color::Cyan, true, "\nAvailable Commands:");
+			
+			console::print(console::Color::White, true, "plot <expression>");
+				console::print(console::Color::Default, true, "  Draws a function");
+			console::print(console::Color::White, true, "clear");
+				console::print(console::Color::Default, true, "  Removes all functions");
+			console::print(console::Color::White, true, "help");
+				console::print(console::Color::Default, true, "  Shows this menu");
+			continue;
 		}
 
 		if (cmd == "clear")
 		{
 			std::lock_guard<std::mutex> lock(functions_mutex);
 			functions.clear();
+			viewport_dirty = true;
 			console::print(console::Color::Yellow, true, "Removed all functions");
-			continue;
-		}
-
-		if (cmd.rfind("zoom", 0) == 0)
-		{
-			float factor = std::stof(cmd.substr(5));
-			viewport.scale *= factor;
-			console::print(console::Color::Cyan, true, "Changed zoom");
-			continue;
-		}
-
-		if (cmd.rfind("pan", 0) == 0)
-		{
-			float dx = 0.f, dy = 0.f;
-			sscanf_s(cmd.c_str(), "pan %f %f", &dx, &dy);
-
-			viewport.offsetX += dx;
-			viewport.offsetY += dy;
-
-			console::print(console::Color::Cyan, true, "Viewport moved");
 			continue;
 		}
 
@@ -191,7 +183,6 @@ int main()
 			try
 			{
 				auto func = parser::parseExpression(expr);
-
 				std::lock_guard<std::mutex> lock(functions_mutex);
 
 				functions.push_back({
@@ -203,6 +194,7 @@ int main()
 					)
 				});
 
+				viewport_dirty = true;
 				console::print(console::Color::Green, true, "Function added");
 			}
 			catch (const std::exception& e)
@@ -213,6 +205,9 @@ int main()
 			continue;
 		}
 
-		console::print(console::Color::Red, true, "Unknown command. Type 'help' for available commands");
+		console::print(console::Color::Red, true, "Unknown command. Type 'help'");
 	}
+
+	renderThread.join();
+	return 0;
 }
